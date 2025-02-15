@@ -1,24 +1,3 @@
-# Dart-Frog-Study
-
-## Route
-
-Route의 구성은 대략 아래와 같다.
-
-http://localhost or http://localhost/index
--> dart_frog/routes/index.dart
-
-http://localhost/hello or http://localhost/hello/index
--> dart_frog/routes/hello.dart or dart_frog/routes/hello/index.dart
-
-http://localhost/complex/path/to/service
--> dart_frog/routes/complex/path/to/service.dart or dart_frog/routes/comples/path/to/service/index.dart
-
-## Method
-
-Express는 `app.get`, `app.post`와 같이 Method에 접근할 수 있으나 Dart Frog는 이런 기능이 없다.  
-그래서 어떻게 컨트롤하는게 가장 좋을까 생각해보았고 아래와 같이 구성하니 관리 및 유지하는데 좋았다.
-
-```dart
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
@@ -61,4 +40,3 @@ Response _handlePut(RequestContext context) {
     body: 'Request Method: ${context.request.method}',
   );
 }
-```
