@@ -75,9 +75,9 @@ Query paramters는 headers와 동일하기 `ReqeustContext`를 통해 값을 가
 final queryParamters = context.request.uri.queryParameters;
 ```
 
-## Body
+## Request Body
 
-Body는 `RequestContext`를 통해 async/await으로 가져올 수 있다.
+Request Body는 `RequestContext`를 통해 `async/await`으로 가져올 수 있다.
 
 - String
 
@@ -195,6 +195,49 @@ Body는 `RequestContext`를 통해 async/await으로 가져올 수 있다.
 ## HTTP Status
 
 HTTP status code는 `dart:io`에 `HttpStatus`에 모두 정의되어 있음.
+
+## Response Body
+
+Response에 body를 실어서 전달하는 방법은 다음과 같다.
+
+1. `toJson`이 있는 model을 생성하고.
+2. Body에 전달할 객체를 생성하고 `toJson`으로 `Response`의 `body`에 전달
+
+```dart
+@JsonSerializable()
+class User {
+  const User({
+    required this.id,
+    required this.username,
+    required this.email,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  final String id;
+  final String username;
+  final String email;
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
+}
+
+Response onRequest(RequestContext context) {
+  switch (context.request.method) {
+    case HttpMethod.get:
+      const user = User(
+        id: '1',
+        username: 'jone',
+        email: 'jone@gmail.com',
+      );
+
+      return Response.json(
+        body: user.toJson(),
+      );
+    case _:
+      return Response(statusCode: HttpStatus.methodNotAllowed);
+  }
+}
+```
 
 ## Dynamic Routes
 
