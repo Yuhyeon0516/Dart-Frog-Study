@@ -62,3 +62,19 @@ Response _handlePut(RequestContext context) {
   );
 }
 ```
+
+## Headers
+
+Headers는 `RequestContext`를 통해 headers의 값을 가져올 수 있다.
+
+```dart
+final headers = context.request.headers;
+```
+
+## Query Parameters
+
+Query paramters는 headers와 동일하기 `ReqeustContext`를 통해 값을 가져올 수 있다.
+
+```dart
+final queryParamters = context.request.uri.queryParameters;
+```
