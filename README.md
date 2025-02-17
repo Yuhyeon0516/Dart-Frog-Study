@@ -429,4 +429,6 @@ Root 경로에 `public` 폴더 내에 static file은 접근이 가능하다.
 
 ## Dart Frog Test
 
+사실 어느 플랫폼의 test와 별반 다른건 없어서 코드를 보는게 이해가 빠름.
+
 ## Authentication
