@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
-import '../../../routes/body/json/index.dart' as route;
+import '../../../../routes/body/string/index.dart' as route;
 
 class _MockRequestContext extends Mock implements RequestContext {}
 
@@ -43,22 +42,16 @@ void main() {
     });
   });
 
-  group('POST /body/json', () {
-    final contentTypeJsonHeader = {
-      HttpHeaders.contentTypeHeader:
-          ContentType('application', 'json').mimeType,
+  group('POST /body/string', () {
+    final contentTypeTextPlainHeader = {
+      HttpHeaders.contentTypeHeader: ContentType('text', 'plain').mimeType,
     };
 
     test('should respond with a 200, with bodyType and content', () async {
       final request = Request.post(
         Uri.parse('http://localhost/'),
-        headers: contentTypeJsonHeader,
-        body: jsonEncode({
-          'integer': 1,
-          'string': 'value',
-          'null': null,
-          'list': [1, 2, 3],
-        }),
+        headers: contentTypeTextPlainHeader,
+        body: 'String type body',
       );
 
       when(() => context.request).thenReturn(request);
@@ -67,17 +60,9 @@ void main() {
 
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
-        response.json(),
+        response.body(),
         completion(
-          equals({
-            'bodyType': '_Map<String, dynamic>',
-            'content': {
-              'integer': 1,
-              'string': 'value',
-              'null': null,
-              'list': [1, 2, 3],
-            },
-          }),
+          equals('bodyType: String, context: String type body'),
         ),
       );
     });
@@ -89,32 +74,16 @@ void main() {
 
       when(() => context.request).thenReturn(request);
       when(() => request.method).thenReturn(HttpMethod.post);
-      when(() => request.headers).thenReturn(contentTypeJsonHeader);
-
-      when(request.json).thenAnswer(
-        (_) async => <String, dynamic>{
-          'integer': 1,
-          'string': 'value',
-          'null': null,
-          'list': [1, 2, 3],
-        },
-      );
+      when(() => request.headers).thenReturn(contentTypeTextPlainHeader);
+      when(request.body).thenAnswer((_) async => 'String type body');
 
       final response = await route.onRequest(context);
 
       expect(response.statusCode, equals(HttpStatus.ok));
       expect(
-        response.json(),
+        response.body(),
         completion(
-          equals({
-            'bodyType': '_Map<String, dynamic>',
-            'content': {
-              'integer': 1,
-              'string': 'value',
-              'null': null,
-              'list': [1, 2, 3],
-            },
-          }),
+          equals('bodyType: String, context: String type body'),
         ),
       );
     });
