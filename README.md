@@ -314,6 +314,45 @@ Response onRequest(RequestContext context, String date) {
 
 ## Middleware
 
+Middleware도 route와 같이 cli로 생성이 가능하다.  
+생성한 폴더 하위 경로의 모든 route에 middleware가 적용된다. 예를 들어 `/`의 root routes에 middleware를 적용한다면, `/` 하위 모든 route에 middleware가 적용된다.  
+Middleware는 아래 코드의 구조로 이루어져 있고 `.use`의 실행 순서의 경우 bottom to top 즉, 마지막에 chain한 middleware가 가장 먼저 실행된다. 아래 코드를 예시로 들자면 `requestLogger` -> `_rootMiddlewareTwo` -> `_rootMiddlewareOne` 순서로 middleware가 실행된다.
+
+```
+Handler middleware(Handler handler) {
+  return handler
+      .use(_rootMiddlewareOne)
+      .use(_rootMiddlewareTwo)
+      .use(requestLogger());
+}
+
+Handler _rootMiddlewareOne(Handler handler) {
+  return (RequestContext context) async {
+    print('[root] before request');
+    final response = await handler(context);
+
+    print('[root] after request');
+
+    return response;
+  };
+}
+
+Handler _rootMiddlewareTwo(Handler handler) {
+  return (RequestContext context) async {
+    print('[root2] before request');
+    final response = await handler(context);
+
+    print('[root2] after request');
+
+    return response;
+  };
+}
+```
+
 ## Provider
 
 ## Static Files
+
+## Dart Frog Test
+
+## Authentication
