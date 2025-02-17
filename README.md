@@ -241,7 +241,76 @@ Response onRequest(RequestContext context) {
 
 ## Dynamic Routes
 
+- Single
+
+  Single의 경우 route를 `/dynamic/posts/[id].dart`와 같이 생성하면 아래 코드처럼 `id`에 접근이 가능하다.
+
+  ```dart
+  Response onRequest(
+    RequestContext context,
+    String id,
+  ) {
+    switch (context.request.method) {
+      case HttpMethod.get:
+        return Response.json(
+          body: {
+            'id': id,
+            'message': 'Post with $id',
+          },
+        );
+      case _:
+        return Response(statusCode: HttpStatus.methodNotAllowed);
+    }
+  }
+  ```
+
+- Multiple
+
+  Multiple의 경우 route를 `/dynamic/users/[userId]/posts/[postId].dart`와 같이 생성하면 아래 코드처럼 `userId`와 `postId`에 접근이 가능하다.
+
+  ```dart
+  Response onRequest(
+    RequestContext context,
+    String userId,
+    String postId,
+  ) {
+    switch (context.request.method) {
+      case HttpMethod.get:
+        return Response.json(
+          body: {
+            'routeParameters': {
+              'userId': userId,
+              'postId': postId,
+            },
+          },
+        );
+      case _:
+        return Response(statusCode: HttpStatus.methodNotAllowed);
+    }
+  }
+  ```
+
 ## Wildcard Routes
+
+Wildcard의 경우 `wildcard/comments/[...date].dart`로 생성하면 되는데 cli 커맨드가 정상 동작하지 않아서 직접 생성해주어야 한다.  
+cli 미동작 관련 issue는 하기 github에 있다.  
+https://github.com/VeryGoodOpenSource/dart_frog/issues/732  
+위와 같이 wildcard url을 맞추었다면 아래와 같이 호출할 수 있다.
+
+```dart
+Response onRequest(RequestContext context, String date) {
+  switch (context.request.method) {
+    case HttpMethod.get:
+      return Response.json(
+        body: {
+          'date': date,
+        },
+      );
+    case _:
+      return Response(statusCode: HttpStatus.methodNotAllowed);
+  }
+}
+```
 
 ## Middleware
 
