@@ -424,6 +424,9 @@ Provider는 lazy loading 방식으로 동작하기 때문에 `context.read`를 �
 
 ## Static Files
 
+Root 경로에 `public` 폴더 내에 static file은 접근이 가능하다.  
+예를 들어 `/public/hello.txt`의 static file에 접근하고 싶다면 `localhost/hello.txt`의 경로로 접근이 가능하다.
+
 ## Dart Frog Test
 
 ## Authentication
