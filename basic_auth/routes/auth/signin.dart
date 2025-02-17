@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:basic_auth/jwt_service.dart';
 import 'package:basic_auth/typedefs.dart';
 import 'package:basic_auth/user_repository.dart';
-import 'package:basic_auth/utils.dart';
 import 'package:dart_frog/dart_frog.dart';
 import 'package:string_validator/string_validator.dart';
 
@@ -46,10 +46,16 @@ Future<Response> _signin(RequestContext context) async {
       password: password!,
     );
 
+    final jwtService = context.read<JwtService>();
+    final payload = {
+      'id': user.id,
+    };
+    final token = jwtService.sign(payload);
+
     return Response.json(
       body: {
         'id': user.id,
-        'token': Utils.createToken(email, password),
+        'token': token,
       },
     );
   } catch (e) {
