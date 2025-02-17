@@ -4,7 +4,8 @@ Handler middleware(Handler handler) {
   return handler
       .use(_rootMiddlewareOne)
       .use(_rootMiddlewareTwo)
-      .use(requestLogger());
+      .use(requestLogger())
+      .use(tokenProvider());
 }
 
 Handler _rootMiddlewareOne(Handler handler) {
@@ -27,4 +28,8 @@ Handler _rootMiddlewareTwo(Handler handler) {
 
     return response;
   };
+}
+
+Middleware tokenProvider() {
+  return provider((context) => '1234xyz');
 }

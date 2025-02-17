@@ -351,6 +351,77 @@ Handler _rootMiddlewareTwo(Handler handler) {
 
 ## Provider
 
+Provider는 middleware의 일종으로 Dart Frog에서는 provider를 통해 DI를 진행한다.  
+Express와 굉장히 유사성을 띄지만 Express에서는 request에 직접적으로 data를 주입하지만 Dart Frog는 provider -> RequestContext -> context.read로 data의 주입 및 확인이 가능하다. 아래 코드에서 예시를 들어두었다.
+
+```dart
+Middleware tokenProvider() {
+  return provider((context) => '1234xyz');
+}
+
+Handler middleware(Handler handler) {
+  return handler
+      .use(tokenProvider());
+}
+
+Response onRequest(RequestContext context) {
+  final token = context.read<String>();
+
+  return Response.json(
+    body: {
+      'token': token,
+      'message': 'hello there',
+    },
+  );
+}
+```
+
+Async value도 provider에서 이용이 가능하다.
+
+```dart
+Handler middleware(Handler handler) {
+  return handler.use(userProvider()).use(asyncUserProvider());
+}
+
+Middleware userProvider() {
+  return provider<User>(
+    (context) => const User(
+      id: '1',
+      username: 'john',
+      email: 'john@gmail.com',
+    ),
+  );
+}
+
+Middleware asyncUserProvider() {
+  return provider<Future<User>>((context) async {
+    await Future<void>.delayed(
+      const Duration(seconds: 3),
+    );
+
+    return const User(
+      id: '2',
+      username: 'jane',
+      email: 'jane@gmail.com',
+    );
+  });
+}
+
+Future<Response> onRequest(RequestContext context) async {
+  final user = context.read<User>();
+  final asyncUser = await context.read<Future<User>>();
+
+  return Response.json(
+    body: {
+      'user': user,
+      'asyncUser': asyncUser,
+    },
+  );
+}
+```
+
+Provider는 lazy loading 방식으로 동작하기 때문에 `context.read`를 호출하지 않는다면 생성되지 않는다.
+
 ## Static Files
 
 ## Dart Frog Test
